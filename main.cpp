@@ -123,16 +123,43 @@ void heapSort(int* array,int length)
     }
 }
 
+int partition(int* array, int p, int r) //p - first element, r - last element
+{
+    int x = array[r];
+    int i = p-1;
+    for(int j=p;j<r;j++)
+    {
+        if(array[j]<=x)
+        {
+            i++;
+            swap(array[i],array[j]);
+        }
+    }
+    swap(array[i+1],array[r]);
+    return i+1;
+}
+
+void quickSort(int* array, int p, int r)
+{
+    if(p<r) {
+        int q = partition(array, p, r);
+        quickSort(array, p, q-1);
+        quickSort(array, q + 1, r);
+    }
+}
+
 int main()
 {
     int array[10] = {1,3,5,8,19,1,2,4,15,18};
     //insertSort(array,10);
-    heapSort(array,10);
+    //heapSort(array,10);
+    quickSort(array,0,9);
     for (int i : array) cout<< i <<" ";
     cout<<endl;
     int array2[10] = {1,20,19,3,2,1,23,4,0,12};
     //mergeSort(array2,0,9);
-    heapSort(array2,10);
+    //heapSort(array2,10);
+    quickSort(array2,0,9);
     for (int i : array2) cout<< i <<" ";
 
     return 0;
