@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <utility>
 
 using namespace std;
 int* insertSort(int* array,int n) {
@@ -65,14 +66,73 @@ void mergeSort(int* array, int p, int r)
     }
 }
 
+int getLeft(int i)
+{
+    return 2*i+1;
+}
+int getRight(int i)
+{
+    return 2*i+2;
+}
+int getParent(int i)
+{
+    return (i-1)/2;
+}
+
+void maxHeapify(int* array, int heapSize, int i)
+{
+    int left = getLeft(i);
+    int right = getRight(i);
+    int largest;
+    if(left<heapSize && array[left]>array[i])
+    {
+        largest = left;
+    }
+    else{
+        largest = i;
+    }
+    if(right<heapSize && array[right]>array[largest])
+    {
+        largest = right;
+    }
+    if(largest!=i)
+    {
+        swap(array[i],array[largest]);
+        maxHeapify(array,heapSize,largest);
+    }
+}
+
+void buildHeap(int* array,int length)
+{
+    int heapSize = length;
+    for(int i=(heapSize/2);i>=0;i--)
+    {
+        maxHeapify(array,heapSize,i);
+    }
+}
+
+void heapSort(int* array,int length)
+{
+    int heapSize = length;
+    buildHeap(array,length);
+    for(int i=length-1;i>0;i--)
+    {
+        swap(array[0],array[i]);
+        heapSize = heapSize - 1;
+        maxHeapify(array,heapSize,0);
+    }
+}
+
 int main()
 {
     int array[10] = {1,3,5,8,19,1,2,4,15,18};
-    insertSort(array,10);
+    //insertSort(array,10);
+    heapSort(array,10);
     for (int i : array) cout<< i <<" ";
     cout<<endl;
     int array2[10] = {1,20,19,3,2,1,23,4,0,12};
-    mergeSort(array2,0,9);
+    //mergeSort(array2,0,9);
+    heapSort(array2,10);
     for (int i : array2) cout<< i <<" ";
 
     return 0;
