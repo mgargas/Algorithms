@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 #include <utility>
+#include <cstdlib>
 
 using namespace std;
 int* insertSort(int* array,int n) {
@@ -148,6 +149,20 @@ void quickSort(int* array, int p, int r)
     }
 }
 
+int* countingSort(int* a, int n, int k)
+{
+    int* c = new int[k]; //additional array for counting each numbers
+    int* b = new int[n]; //array a that has been sorted
+    for(int i=0;i<k;i++) c[i]=0;
+    for(int i=0;i<n;i++) c[a[i]]=c[a[i]]+1;
+    for(int i=1;i<k;i++) c[i]=c[i]+c[i-1];
+    for(int i=n-1;i>=0;i--){
+        b[c[a[i]]-1] = a[i];
+        c[a[i]] = c[a[i]]-1;
+    }
+    return b;
+}
+
 int main()
 {
     int array[10] = {1,3,5,8,19,1,2,4,15,18};
@@ -161,6 +176,17 @@ int main()
     //heapSort(array2,10);
     quickSort(array2,0,9);
     for (int i : array2) cout<< i <<" ";
+    cout<<endl;
+    int* array3 = new int[20];
+    for(int i=0;i<20;i++)
+    {
+        array3[i] = rand()%15;
+    }
+    for(int i=0;i<20;i++) cout<<array3[i]<<" ";
+    array3 = countingSort(array3,20,15);
+    cout<<endl;
+    for(int i=0;i<20;i++) cout<<array3[i]<<" ";
+
 
     return 0;
 }
