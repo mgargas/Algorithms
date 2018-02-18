@@ -4,7 +4,13 @@
 #include <cstdlib>
 
 using namespace std;
-int* insertSort(int* array,int n) {
+
+void printArray(int array[],int length){
+    for(int i=0;i<length;i++) cout<<array[i]<<" ";
+    cout<<endl;
+}
+
+void insertSort(int array[],int n) {
     for(int i=1;i<n;i++)
     {
         // choose the key
@@ -18,11 +24,10 @@ int* insertSort(int* array,int n) {
         }
         array[j+1] = key;
     }
-    return array;
 }
 
 
-void merge(int* array, int p, int q, int r)
+void merge(int array[], int p, int q, int r)
 {
     int n1 = q-p+1;
     int n2 = r-q;
@@ -56,7 +61,7 @@ void merge(int* array, int p, int q, int r)
 }
 
 
-void mergeSort(int* array, int p, int r)
+void mergeSort(int array[], int p, int r)
 {
     if(p<r)
     {
@@ -80,7 +85,7 @@ int getParent(int i)
     return (i-1)/2;
 }
 
-void maxHeapify(int* array, int heapSize, int i)
+void maxHeapify(int array[], int heapSize, int i)
 {
     int left = getLeft(i);
     int right = getRight(i);
@@ -103,7 +108,7 @@ void maxHeapify(int* array, int heapSize, int i)
     }
 }
 
-void buildHeap(int* array,int length)
+void buildHeap(int array[],int length)
 {
     int heapSize = length;
     for(int i=(heapSize/2);i>=0;i--)
@@ -112,7 +117,7 @@ void buildHeap(int* array,int length)
     }
 }
 
-void heapSort(int* array,int length)
+void heapSort(int array[],int length)
 {
     int heapSize = length;
     buildHeap(array,length);
@@ -124,7 +129,7 @@ void heapSort(int* array,int length)
     }
 }
 
-int partition(int* array, int p, int r) //p - first element, r - last element
+int partition(int array[], int p, int r) //p - first element, r - last element
 {
     int x = array[r];
     int i = p-1;
@@ -140,7 +145,7 @@ int partition(int* array, int p, int r) //p - first element, r - last element
     return i+1;
 }
 
-void quickSort(int* array, int p, int r)
+void quickSort(int array[], int p, int r)
 {
     if(p<r) {
         int q = partition(array, p, r);
@@ -149,10 +154,10 @@ void quickSort(int* array, int p, int r)
     }
 }
 
-int* countingSort(int* a, int n, int k)
+void countingSort(int a[], int n, int k)
 {
-    int* c = new int[k]; //additional array for counting each numbers
-    int* b = new int[n]; //array a that has been sorted
+    int c[k]; //additional array for counting each numbers
+    int b[n]; //sorted array
     for(int i=0;i<k;i++) c[i]=0;
     for(int i=0;i<n;i++) c[a[i]]=c[a[i]]+1;
     for(int i=1;i<k;i++) c[i]=c[i]+c[i-1];
@@ -160,8 +165,52 @@ int* countingSort(int* a, int n, int k)
         b[c[a[i]]-1] = a[i];
         c[a[i]] = c[a[i]]-1;
     }
-    return b;
+    for(int i=0;i<n;i++) a[i] = b[i];
 }
+
+int getMax(int array[], int length)
+{
+    if(length<1) return 0;
+    int max = array[0];
+    for(int i=1;i<length;i++){
+        if(array[i]>max) max = array[i];
+    }
+    return max;
+}
+int countDigits(int number){
+    int counter = 0;
+    while(number!=0){
+        counter++;
+        number = number/10;
+    }
+    return counter;
+}
+
+void countingSortAccordingToDigit(int array[], int length, int digit){ //digit=1 means the least significant digit
+    int output[length];
+    int counter[10] = {0};
+    for(int i=0;i<length;i++){
+        counter[(array[i]/digit)%10]++;
+    }
+    for(int i=1;i<10;i++){
+        counter[i] = counter[i] + counter[i-1];
+    }
+    for(int i=length-1;i>=0;i--){
+        output[counter[(array[i]/digit)%10]-1] = array[i];
+        counter[(array[i]/digit)%10]--;
+    }
+    for(int i=0;i<length;i++){
+        array[i] = output[i];
+    }
+}
+
+void radixSort(int array[], int length){
+    int max = getMax(array,length);
+    for(int digit = 1;(max/digit)>0;digit=digit*10){
+        countingSortAccordingToDigit(array,length,digit);
+    }
+}
+
 
 int main()
 {
@@ -169,24 +218,32 @@ int main()
     //insertSort(array,10);
     //heapSort(array,10);
     quickSort(array,0,9);
-    for (int i : array) cout<< i <<" ";
-    cout<<endl;
+    printArray(array,10);
+
     int array2[10] = {1,20,19,3,2,1,23,4,0,12};
     //mergeSort(array2,0,9);
     //heapSort(array2,10);
     quickSort(array2,0,9);
-    for (int i : array2) cout<< i <<" ";
-    cout<<endl;
-    int* array3 = new int[20];
+    printArray(array2,10);
+
+    int array3[20];
     for(int i=0;i<20;i++)
     {
         array3[i] = rand()%15;
     }
-    for(int i=0;i<20;i++) cout<<array3[i]<<" ";
-    array3 = countingSort(array3,20,15);
-    cout<<endl;
-    for(int i=0;i<20;i++) cout<<array3[i]<<" ";
+    printArray(array3,20);
+    countingSort(array3,20,15);
+    printArray(array3,20);
 
+    int array4[20];
+    for(int i=0;i<20;i++)
+    {
+        array4[i] = rand()%1000;
+    }
+    printArray(array4,10);
+    radixSort(array4,20);
+    //countingSortAccordingToDigit(array4,10,1);
+    printArray(array4,10);
 
     return 0;
 }
