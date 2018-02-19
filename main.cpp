@@ -10,6 +10,11 @@ void printArray(int array[],int length){
     cout<<endl;
 }
 
+void printArray(float array[],int length){
+    for(int i=0;i<length;i++) cout<<array[i]<<" ";
+    cout<<endl;
+}
+
 void insertSort(int array[],int n) {
     for(int i=1;i<n;i++)
     {
@@ -211,6 +216,71 @@ void radixSort(int array[], int length){
     }
 }
 
+struct Node{
+    float value;
+    Node* next;
+};
+void insertBeginning(Node* &head, float key){
+    Node* newNode = new Node;
+    newNode->value = key;
+    newNode->next = head;
+    head = newNode;
+}
+void printList(Node* head){
+    while(head!=NULL){
+        cout<<"key = "<<head->value<<" ";
+        head = head->next;
+    }
+}
+void insertSorted(Node* &head, Node* newNode){
+    if(head==NULL || head->value >= newNode->value){
+        newNode->next = head;
+        head = newNode;
+    }
+    else{
+        Node* current = head;
+        while(current->next!=NULL && current->next->value <= newNode->value){
+            current = current->next;
+        }
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+}
+
+void insertSort(Node* &head){
+    Node* output = NULL;
+    Node* current = head;
+    while(current!=NULL){
+        Node* next = current->next;
+        insertSorted(output,current);
+        current = next;
+    }
+    head = output;
+}
+
+void bucketSort(float array[],int n){
+    //make n buckets
+    Node* bucketArray[n] = {NULL};
+    for(int i=0;i<n;i++){
+        //insert into appropriate bucket
+        int index = (int)(n*array[i]);
+        float key = array[i];
+        insertBeginning(bucketArray[index],key);
+    }
+    for(int i=0;i<n;i++){ //sort each bucket
+        insertSort(bucketArray[i]);
+    }
+    int j=0;
+    for(int i=0;i<n;i++){ //combine buckets(put keys into array)
+        Node* current = bucketArray[i];
+        while(current!=NULL){
+            array[j] = current->value;
+            j++;
+            current = current->next;
+        }
+    }
+}
+
 
 int main()
 {
@@ -244,6 +314,14 @@ int main()
     radixSort(array4,20);
     //countingSortAccordingToDigit(array4,10,1);
     printArray(array4,10);
+
+    float array5[20];
+    for(int i=0;i<20;i++){
+        array5[i] = ((float) rand()) / (float) RAND_MAX;
+    }
+    printArray(array5,20);
+    bucketSort(array5,20);
+    printArray(array5,20);
 
     return 0;
 }
