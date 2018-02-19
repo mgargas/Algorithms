@@ -2,6 +2,7 @@
 #include <limits>
 #include <utility>
 #include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -280,6 +281,30 @@ void bucketSort(float array[],int n){
         }
     }
 }
+int random(int min, int max) //range : [min, max)
+{
+    static bool first = true;
+    if ( first )
+    {
+        srand(time(NULL)); //seeding for the first time only!
+        first = false;
+    }
+    return min + rand() % ((max + 1) - min);
+}
+int randomizedPartition(int array[],int p,int r){
+    int randomIndex = random(p,r);
+    swap(array[randomIndex],array[r]);
+    return partition(array,p,r);
+}
+
+int select(int array[],int p,int r,int i){
+    if(p==r) return array[p];
+    int q = randomizedPartition(array,p,r);
+    int k = q-p+1;
+    if(k==i) return array[q];
+    else if(k>i) return select(array,p,q-1,i);
+    else return select(array,q+1,r,i-k);
+}
 
 
 int main()
@@ -289,6 +314,7 @@ int main()
     //heapSort(array,10);
     quickSort(array,0,9);
     printArray(array,10);
+    cout<<"This is the 4th smallest number in the array: "<<select(array,0,9,4)<<endl;
 
     int array2[10] = {1,20,19,3,2,1,23,4,0,12};
     //mergeSort(array2,0,9);
